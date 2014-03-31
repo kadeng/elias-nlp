@@ -12,3 +12,4 @@ under the Apache 2.0 license.
 
 Please keep in mind that this is code from 2001/2002 when many modern java libraries and coding practices didn't exist yet.
 
+Kai Londenberg, 2014 ( Kai.Londenberg@googlemail.com )
