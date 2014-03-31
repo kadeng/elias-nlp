@@ -7,9 +7,9 @@ of single characters. It allows to embed pattern elements which have grammatical
 
 As such, it is possible to write extremely efficient patterns like these:
 
----
+'
 (What|Who) (is|was) <OBJECT|PERSON>=name [?]
----
+'
 where OBJECT or PERSON might be token classes associated with large dictionaries or ontologies. The assignment =name
 allows to extract parts of the matched sentences via name.
 
