@@ -1,0 +1,10 @@
+[PropertyInfo]
+description,String,false,false, , ,true,<default>
+freeValue,boolean,false,false, , ,true,<default>
+identifier,String,false,false, , ,true,<default>
+multipleValuesAllowed,boolean,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

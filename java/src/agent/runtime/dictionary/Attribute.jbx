@@ -1,0 +1,11 @@
+[PropertyInfo]
+backreference,boolean,false,false,backreference,backreference,true,<default>
+description,String,false,false, , ,true,<default>
+freeValue,boolean,false,false, , ,true,<default>
+identifier,String,false,false, , ,true,<default>
+multiValue,boolean,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

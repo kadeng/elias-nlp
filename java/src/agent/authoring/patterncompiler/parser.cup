@@ -1,0 +1,142 @@
+// JavaCup specification for the Pattern Grammar
+
+package elias.agent.authoring.patterncompiler;
+
+import java_cup.runtime.*;
+import elias.agent.runtime.pattern.*;
+
+/* Terms (tokens returned by the scanner). */
+terminal           BEFORE, OR, AND, NOT; 
+terminal 	   RBRACK, LBRACK, OPTRBRACK, OPTLBRACK;
+terminal Range	   SEARCH, REPEAT;
+terminal String	   NAMED;
+terminal Pattern   PREDEFINED_PATTERN; // to be identified by the scanner using a Table of pre-defined patterns
+terminal Terminal  TERMINAL; // to be identified by the Scanner
+
+/* Non terminals */
+non terminal PatternStructure pattern_structure;
+non terminal Pattern pattern;
+non terminal Pattern terminal_pattern, sequence, not, or, and, search, repetition, optional, named;
+
+/* Precedences */
+precedence nonassoc RBRACK, LBRACK, OPTRBRACK, OPTLBRACK;
+precedence left SEARCH;
+precedence right REPEAT;
+precedence left AND;
+precedence left OR;
+precedence left BEFORE;
+precedence right NOT;
+precedence nonassoc TERMINAL, PREDEFINED_PATTERN, NAMED;
+
+/* The grammar */
+pattern_structure ::= 
+	pattern:p {:
+		RESULT = new PatternStructure(p);
+	:}
+	;
+	
+pattern ::= LBRACK pattern:p RBRACK {:
+		RESULT = p;
+	:} |
+	terminal_pattern:p {:
+		RESULT = p;
+	:} |
+	sequence:p {:
+			RESULT = p;
+	:} |
+	not:p {:
+			RESULT = p;
+	:} |
+	or:p {:
+			RESULT = p;
+	:} |
+	and:p {:
+			RESULT = p;
+	:} |
+	search:p {:
+			RESULT = p;
+	:} |
+	repetition:p {:
+			RESULT = p;
+	:} |
+	named:p {:
+			RESULT = p;
+	:} |
+	optional:p {:
+			RESULT = p;
+	:} |
+	PREDEFINED_PATTERN:p {:
+				RESULT = p;
+	:}
+	;
+	
+terminal_pattern ::= 
+	TERMINAL:t {:
+		RESULT = Pattern.createTerminal(t);
+	:}
+	;
+
+not ::= NOT pattern:p {:
+		RESULT = Pattern.createNegation(p);
+	:}
+	;
+
+search ::= SEARCH:r pattern:p {:
+		RESULT = Pattern.createSearch(p, r.from, r.to);
+	:}
+	;
+		
+repetition ::= REPEAT:r pattern:p {:
+		RESULT = Pattern.createRepetition(p, r.from, r.to);
+	:}
+	;
+	
+optional ::= OPTLBRACK pattern:p OPTRBRACK {:
+		RESULT = Pattern.createOptional(p);
+	:}
+	;
+
+
+sequence ::=
+	pattern:a BEFORE pattern:b {:
+		RESULT = Pattern.createSequence();
+		RESULT.addChild(a);
+		RESULT.addChild(b);
+	:} |
+	sequence:s BEFORE pattern:b {:
+		s.addChild(b);
+		RESULT = s;
+	:}
+	;
+
+or ::=
+	pattern:a OR pattern:b {:
+		RESULT = Pattern.createOr();
+		RESULT.addChild(a);
+		RESULT.addChild(b);
+	:} |
+	or:s OR pattern:b {:
+		s.addChild(b);
+		RESULT = s;
+	:}
+	;
+
+named ::= 
+	pattern:a NAMED:n {:
+		RESULT = Pattern.createNamed(n, a);
+	:}
+	;
+
+
+and ::=
+	pattern:a AND pattern:b {:
+		RESULT = Pattern.createAnd();
+		RESULT.addChild(a);
+		RESULT.addChild(b);
+	:} |
+	and:a AND pattern:b {:
+		a.addChild(b);
+		RESULT = a;
+	:}
+	;
+

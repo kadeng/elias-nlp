@@ -1,0 +1,159 @@
+// JavaCup specification for the Pattern Grammar
+
+package elias.agent.authoring.patterncompiler.transformation;
+
+import java_cup.runtime.*;
+import elias.agent.runtime.pattern.*;
+import elias.agent.authoring.patterncompiler.Range;
+import elias.agent.authoring.patterncompiler.ParseException;
+
+/* Terms (tokens returned by the scanner). */
+terminal           BEFORE, OR, AND, NOT; 
+terminal 	   RBRACK, LBRACK, OPTRBRACK, OPTLBRACK;
+terminal Range	   SEARCH, REPEAT;
+terminal String	   NAMED;
+terminal String    PREDEFINED_PATTERN; // to be identified by the scanner using a Table of pre-defined patterns
+terminal Terminal  TERMINAL; // to be identified by the Scanner
+
+/* Non terminals */
+non terminal String pattern_structure;
+non terminal String pattern;
+non terminal String terminal_pattern, sequence, not, or, and, search, repetition, optional, named;
+
+/* Precedences */
+precedence nonassoc RBRACK, LBRACK, OPTRBRACK, OPTLBRACK;
+precedence left SEARCH;
+precedence right REPEAT;
+precedence left AND;
+precedence left OR;
+precedence left BEFORE;
+precedence right NOT;
+precedence nonassoc TERMINAL, PREDEFINED_PATTERN, NAMED;
+
+/* The grammar */
+pattern_structure ::= 
+	pattern:p {:
+		RESULT = p;
+	:}
+	;
+	
+pattern ::= LBRACK pattern:p RBRACK {:
+		RESULT = "(" + p + ")";
+	:} |
+	terminal_pattern:p {:
+		RESULT = p;
+	:} |
+	sequence:p {:
+			RESULT = p;
+	:} |
+	not:p {:
+			RESULT = p;
+	:} |
+	or:p {:
+			RESULT = p;
+	:} |
+	and:p {:
+			RESULT = p;
+	:} |
+	search:p {:
+			RESULT = p;
+	:} |
+	repetition:p {:
+			RESULT = p;
+	:} |
+	named:p {:
+			RESULT = p;
+	:} |
+	optional:p {:
+			RESULT = p;
+	:} |
+	PREDEFINED_PATTERN:p {:
+				RESULT = "<" + p + ">";
+	:}
+	;
+	
+terminal_pattern ::= 
+	TERMINAL:t {:
+		RESULT = t.toJSGFString();
+	:}
+	;
+
+not ::= NOT pattern:p {:
+		RESULT = "[" + p + "]";
+	:}
+	;
+
+search ::= SEARCH:r pattern:p {:
+		RESULT = p;
+	:}
+	;
+		
+repetition ::= REPEAT:r pattern:p {:
+		if ((r.from==1) && (r.to>10)) {
+			RESULT = p + "+";
+		} else if ((r.from==0) && (r.to>10)) {
+			RESULT = p + "*";
+		} else {
+			StringBuffer rs = new StringBuffer();
+			int from = r.from;
+			if (from>10) from = 10;
+			for (int i=0;i<r.from;i++) {
+				rs.append(p);
+				rs.append(" ");
+			}
+			int optionals = r.to-r.from;
+			if (optionals>10) {
+				rs.append(p);
+				rs.append("*");
+			} else {
+				for (int i=0;i<optionals;i++) {
+					rs.append("[");
+					rs.append(p);
+					rs.append("] ");
+				}
+				RESULT = rs.toString();
+			}
+		}
+	:}
+	;
+	
+optional ::= OPTLBRACK pattern:p OPTRBRACK {:
+		RESULT = "[" + p + "]";
+	:}
+	;
+
+
+sequence ::=
+	pattern:a BEFORE pattern:b {:
+		RESULT = a + " " + b;
+	:} |
+	sequence:s BEFORE pattern:b {:
+		RESULT = s + " " + b;
+	:}
+	;
+
+or ::=
+	pattern:a OR pattern:b {:
+		RESULT = a + "|" + b;
+	:} |
+	or:s OR pattern:b {:
+		RESULT = s + "|" + b;
+	:}
+	;
+
+named ::= 
+	pattern:a NAMED:n {:
+		RESULT = a;
+	:}
+	;
+
+
+and ::=
+	pattern:a AND pattern:b {:
+		RESULT = a + "|" + b; 
+	:} |
+	and:a AND pattern:b {:
+		RESULT = a + "|" + b;  
+	:}
+	;
+

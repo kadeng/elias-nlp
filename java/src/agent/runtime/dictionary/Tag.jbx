@@ -1,0 +1,12 @@
+[PropertyInfo]
+attribute,Attribute,false,false, , ,true,<default>
+byDefaultSet,boolean,false,false, , ,true,<default>
+description,String,false,false, , ,true,<default>
+identifier,String,false,false, , ,true,<default>
+ignore,boolean,false,false,ignore,ignore,true,<default>
+index,int,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

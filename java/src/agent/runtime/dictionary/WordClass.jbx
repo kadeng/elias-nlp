@@ -1,0 +1,14 @@
+[PropertyInfo]
+attributes,Attribute[],false,false, , ,true,<default>
+description,String,false,false, , ,true,<default>
+freeValueAttributes,Attribute[],false,false, , ,true,<default>
+identifier,String,false,false, , ,true,<default>
+index,int,false,false, , ,true,<default>
+parent,WordClass,false,false, , ,true,<default>
+tagMap,Map,false,false, , ,true,<default>
+tags,Tag[],false,false, , ,true,<default>
+[IconNames]
+
+
+
+
